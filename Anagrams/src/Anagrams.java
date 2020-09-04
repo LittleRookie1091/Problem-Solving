@@ -126,15 +126,21 @@ public class Anagrams {
             if (!hashFind(each)) {
                 anagramPool(each);
                 if(!depthSearch(each)){
-                    finalOutput.add("Word: " +each + " Anagram: "+ "Could not find anagram" );
+                    finalOutput.add(each + ": " );
                 }else{
-                    finalOutput.add("Word: " +each + " Anagram: "+ bestCase );
+
+                    String outputString = bestCase.get(0);;
+
+                    for(int i = 1; i<bestCase.size();i++){
+                        outputString = outputString+" "+bestCase.get(i);
+                    }
+                    finalOutput.add(each + ": " +outputString);
                 }
             }
         }
-                for(int i = 0; i<finalOutput.size();i++){
-                    System.out.println(finalOutput.get(i));
-                }
+        for(int i = 0; i<finalOutput.size();i++){
+            System.out.println(finalOutput.get(i));
+        }
     }
 
     /*Will check hash array for for 1 word or 2 word anagrams, if found will add them
@@ -144,20 +150,20 @@ public class Anagrams {
         //retrieve
         String use = permutations(word);
         if(hash.get(use) != null){
-            finalOutput.add("Word: " +word + " Anagram: "+ hash.get(use));
+            finalOutput.add(word + ": "+ hash.get(use));
             return true;
         }else{
             for(int i = use.length()-1; i!= -1; i--){
                 String sub = hash.get(use.substring(0,i)+use.substring(i+1));
                 if(hash.get(use.charAt(i)) != null &&
                         sub != null){
-                    finalOutput.add("Word: " +word + " Anagram: "+ hash.get(use.charAt(i))+ " "+ sub);
+                    finalOutput.add(word + ": "+ hash.get(use.charAt(i))+ " "+ sub);
                     return true;
                 }
                 sub = hash.get(use.substring(i));
                 String dom = hash.get(use.substring(0,i));
                 if(dom != null && sub != null){
-                    finalOutput.add("Word: " +word + " Anagram: "+ dom+ " "+ sub);
+                    finalOutput.add(word + ": "+ dom+ " "+ sub);
                     return true;
                 }
             }
@@ -283,30 +289,37 @@ public class Anagrams {
             deepening(letters1, anagramArray.get(count + 1), count + 1);
             }
         }else{
-            if (anagramWord.length() <= letters1.length()) {
-                String letters = getLettersLeft(letters1, anagramWord);
-                if (letters.isEmpty()) {
-                    useArray.add(anagramWord);
-                    if (useArray.size() < bestCaseSize) {
-                        bestCase.clear();
-                        for(int i = 0; i<useArray.size();i++){
-                            bestCase.add(useArray.get(i));
+                if (anagramWord.length() <= letters1.length()) {
+                    String letters = getLettersLeft(letters1, anagramWord);
+                    if (letters.isEmpty()) {
+                        useArray.add(anagramWord);
+                        if (useArray.size() < bestCaseSize) {
+                            bestCase.clear();
+                            for(int i = 0; i<useArray.size();i++){
+                                bestCase.add(useArray.get(i));
+                            }
+                            bestCaseSize = bestCase.size();
+                            return true;
+                        }else if(bestCaseSize== 100){
+                            bestCase.clear();
+                            for(int i = 0; i<useArray.size();i++){
+                                bestCase.add(useArray.get(i));
+                            }
+                            bestCaseSize = bestCase.size();
+                            return true;
                         }
-                        bestCaseSize = bestCase.size();
-                        return true;
-                    }else if(bestCaseSize== 100){
-                        bestCase.clear();
-                        for(int i = 0; i<useArray.size();i++){
-                            bestCase.add(useArray.get(i));
-                        }
-                        bestCaseSize = bestCase.size();
-                        return true;
+                    }else if(letters.equals("-1")){
+                    return false;
+                    }
+                    else{
+                        useArray.add(anagramWord);
+                         deepening(letters, anagramArray.get(count), count);
                     }
                 }
             }
+          return false;
         }
-        return true;
-    }
+
 
     //Figures out  if the wordTest can be an anagram for ana
     public boolean compareTwoWords(String ana, String wordTest){
