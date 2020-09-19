@@ -124,7 +124,9 @@ public class Epidemic {
             for(int i = 0; i<use.size();i++){
                 temp1.add(use.get(i));
             }
-            ArrayList<ArrayList<Integer>> weight = getNew(temp1, on);
+
+            //Calls the method that will check for weighting
+            ArrayList<ArrayList<Integer>> weight = getNew(temp1, on , lookAheads);
             on++;
 
             //System.out.println("Here is achieved");
@@ -200,30 +202,30 @@ public class Epidemic {
             if(set == 0){
                 complete = false;
             }
-//            if(on<15){
-//                for(int i =0; i<use.size();i++){
-//                    System.out.println(use.get(i)+" "+on);
-//                }
-//                System.out.println();
-//            }
-//            if(on<15){
-//                for(int i =0; i<use.size();i++){
-//                    System.out.println(use.get(i)+" "+on);
-//                }
-//                System.out.println();
-//            }
-//            for (int i = 0; i < weight.size(); i++) {
-//                for (int j = 0; j < weight.get(i).size(); j++) {
-//                    if(on<15) {
-//                        System.out.print(weight.get(i).get(j)+" ");
-//                    }
-//
-//                }
-//                if(on<15) {
-//                    System.out.println();
-//                }
-//
-//            }
+            if(on<15){
+                for(int i =0; i<use.size();i++){
+                    System.out.println(use.get(i)+" "+on);
+                }
+                System.out.println();
+            }
+            if(on<15){
+                for(int i =0; i<use.size();i++){
+                    System.out.println(use.get(i)+" "+on);
+                }
+                System.out.println();
+            }
+            for (int i = 0; i < weight.size(); i++) {
+                for (int j = 0; j < weight.get(i).size(); j++) {
+                    if(on<15) {
+                        System.out.print(weight.get(i).get(j)+" ");
+                    }
+
+                }
+                if(on<15) {
+                    System.out.println();
+                }
+
+            }
 
         }
 
@@ -236,7 +238,7 @@ public class Epidemic {
     of them, then weights accordingly.
     returns the weight array.
      */
-    public ArrayList<ArrayList<Integer>> getNew(ArrayList<String> use, int on){
+    public ArrayList<ArrayList<Integer>> getNew(ArrayList<String> use, int on, int depth){
 
         use = finalState(use);
         ArrayList<ArrayList<Integer>> weight = new ArrayList<>();
@@ -264,38 +266,38 @@ public class Epidemic {
 //                        System.out.println();
 //                    }
                     //System.out.println("Iteration: "+ col+" "+row);
-                    int one = possibleS(use, row-2, col, on);
-                    if(one != -45){
-                        weight.get(row-2).set(col, one);
-                    }
-                    int two = possibleS(use, row-1, col+1, on);
-                    if(two != -45){
-                        weight.get(row-1).set(col+1, two);
-                    }
-                    int three = possibleS(use, row, col+2, on);
-                    if(three != -45){
-                        weight.get(row).set(col+2, three);
-                    }
-                    int four = possibleS(use, row+1, col+1, on);
-                    if(four != -45){
-                       // System.out.println((row+1)+" "+ (col+1));
-                        weight.get(row+1).set(col+1, four);
-                    }
-                    int five = possibleS(use, row+2, col, on);
+
+                }
+                if (use.get(row).substring(col, col + 1).equals(".")) {
+                    int five = possibleS(use, row, col, on);
                     if(five != -45){
-                        weight.get(row+2).set(col, five);
+                        weight.get(row).set(col, five);
                     }
-                    int six = possibleS(use, row+1, col-1, on);
-                    if(six != -45){
-                        weight.get(row+1).set(col-1, six);
-                    }
-                    int seven = possibleS(use, row, col-2, on);
-                    if(seven != -45){
-                        weight.get(row).set(col-2, seven);
-                    }
-                    int eight = possibleS(use, row-1, col-1, on);
-                    if(eight != -45){
-                        weight.get(row-1).set(col-1, eight);
+                }
+                //Creates a temp array version of use and replaces  a single . with S, and then at the ahead
+                //possibilities according to look ahead.
+                if (use.get(row).substring(col, col + 1).equals(".")) {
+                    for (int index = 0; index < depth + 1; index++) {
+
+                        //Set the . to an S
+                        ArrayList<String> temp = new ArrayList<>();
+                        for (int i = 0; i < use.size(); i++) {
+                            temp.add(use.get(i));
+                        }
+                        String str = temp.get(row);
+                        if (col == temp.get(row).length() - 1) {
+                            str = str.substring(0, col) + "S";
+                        } else {
+                            str = str.substring(0, col) + "S" + str.substring(col + 1);
+                        }
+                        temp.set(row, str);
+
+
+                        
+                        int five = possibleS(temp, row, col, on);
+                        if (five != -45) {
+                            weight.get(row).set(col, five);
+                        }
                     }
                 }
             }

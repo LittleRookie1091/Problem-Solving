@@ -172,3 +172,38 @@ public class LastIteration {
     }
 
 }
+
+
+    int one = possibleS(use, row-2, col, on);
+                    if(one != -45){
+                            weight.get(row-2).set(col, one);
+                            }
+                            int two = possibleS(use, row-1, col+1, on);
+                            if(two != -45){
+                            weight.get(row-1).set(col+1, two);
+                            }
+                            int three = possibleS(use, row, col+2, on);
+                            if(three != -45){
+                            weight.get(row).set(col+2, three);
+                            }
+                            int four = possibleS(use, row+1, col+1, on);
+                            if(four != -45){
+                            // System.out.println((row+1)+" "+ (col+1));
+                            weight.get(row+1).set(col+1, four);
+                            }
+                            int five = possibleS(use, row+2, col, on);
+                            if(five != -45){
+                            weight.get(row+2).set(col, five);
+                            }
+                            int six = possibleS(use, row+1, col-1, on);
+                            if(six != -45){
+                            weight.get(row+1).set(col-1, six);
+                            }
+                            int seven = possibleS(use, row, col-2, on);
+                            if(seven != -45){
+                            weight.get(row).set(col-2, seven);
+                            }
+                            int eight = possibleS(use, row-1, col-1, on);
+                            if(eight != -45){
+                            weight.get(row-1).set(col-1, eight);
+                            }
