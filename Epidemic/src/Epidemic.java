@@ -128,8 +128,8 @@ public class Epidemic {
             on++;
 
             //System.out.println("Here is achieved");
-            int col = 0;
-            int row = 0;
+            int col = -1;
+            int row = -1;
             int biggest = 100;
             //Find biggest weight
             for (int i = 0; i < weight.size(); i++) {
@@ -152,15 +152,38 @@ public class Epidemic {
 //                System.out.println();
 //            }
             //Set new string
-
-            String str = use.get(row);
-            if(col==use.get(row).length()-1){
-                str = str.substring(0, col) + "S";
-            }else {
-                str = str.substring(0, col) + "S" + str.substring(col + 1);
+            String str ="";
+            if(row!=-1 &&col!=-1) {
+                str = use.get(row);
+                if (col == use.get(row).length() - 1) {
+                    str = str.substring(0, col) + "S";
+                } else {
+                    str = str.substring(0, col) + "S" + str.substring(col + 1);
+                }
+                //System.out.println(row+" "+col);
+                use.set(row, str);
+            }else{
+                int greatest = -1;
+                for(int i = 0; i<weight.size();i++){
+                    for(int j = 0; j<weight.get(i).size();j++){
+                        if(weight.get(i).get(j)>greatest){
+                            greatest = weight.get(i).get(j);
+                            row = i;
+                            col = j;
+                        }
+                    }
+                }
+                if(greatest == 0){
+                    str = use.get(row);
+                    if (col == use.get(row).length() - 1) {
+                        str = str.substring(0, col) + "S";
+                    } else {
+                        str = str.substring(0, col) + "S" + str.substring(col + 1);
+                    }
+                    //System.out.println(row+" "+col);
+                    use.set(row, str);
+                }
             }
-            //System.out.println(row+" "+col);
-            use.set(row, str);
             ArrayList<String> temp = new ArrayList<>();
             for(int i = 0; i<use.size();i++){
                 temp.add(use.get(i));
@@ -177,6 +200,30 @@ public class Epidemic {
             if(set == 0){
                 complete = false;
             }
+//            if(on<15){
+//                for(int i =0; i<use.size();i++){
+//                    System.out.println(use.get(i)+" "+on);
+//                }
+//                System.out.println();
+//            }
+//            if(on<15){
+//                for(int i =0; i<use.size();i++){
+//                    System.out.println(use.get(i)+" "+on);
+//                }
+//                System.out.println();
+//            }
+//            for (int i = 0; i < weight.size(); i++) {
+//                for (int j = 0; j < weight.get(i).size(); j++) {
+//                    if(on<15) {
+//                        System.out.print(weight.get(i).get(j)+" ");
+//                    }
+//
+//                }
+//                if(on<15) {
+//                    System.out.println();
+//                }
+//
+//            }
 
         }
 
@@ -190,12 +237,7 @@ public class Epidemic {
     returns the weight array.
      */
     public ArrayList<ArrayList<Integer>> getNew(ArrayList<String> use, int on){
-        if(on<15){
-            for(int i =0; i<use.size();i++){
-                System.out.println(use.get(i));
-            }
-            System.out.println();
-        }
+
         use = finalState(use);
         ArrayList<ArrayList<Integer>> weight = new ArrayList<>();
         //Filling weight array to be same size as use
@@ -258,18 +300,7 @@ public class Epidemic {
                 }
             }
         }
-        for (int i = 0; i < weight.size(); i++) {
-            for (int j = 0; j < weight.get(i).size(); j++) {
-//                if(on<15) {
-//                    System.out.print(weight.get(i).get(j)+" ");
-//                }
 
-            }
-//            if(on<15) {
-//                System.out.println();
-//            }
-
-        }
         return weight;
     }
 
@@ -289,7 +320,7 @@ public class Epidemic {
             for (int i = 0; i < use.size(); i++) {
                 temp.add(use.get(i));
             }
-            int set = 0;
+            int set = 1;
 
             //System.out.println(col+ " "+row);
             if (col >= 0 && col < temp.get(0).length()) {
