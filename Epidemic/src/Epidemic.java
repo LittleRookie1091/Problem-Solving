@@ -2,7 +2,10 @@ import java.util.*;
 
 public class Epidemic {
     private ArrayList<ArrayList<String>> universe = new ArrayList<>();
-
+    private int county = -1;
+    private int area;
+    private int amountOfS = 0;
+    private ArrayList<String> theFinal;
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         Epidemic main = new Epidemic();
@@ -66,9 +69,10 @@ public class Epidemic {
         if(efficient%4 != 0){
             bestScount = (efficient+2)/4;
         }
-        System.out.println(efficient+ " "+ bestScount);
+        county = bestScount;
         use = rank(use);
-        use = lookAhead(use, 3);
+        System.out.println(bestScount);
+        use = lookAhead(use, bestScount-amountOfS);
         for (int i = 0; i < use.size(); i++) {
             System.out.println(use.get(i));
         }
@@ -79,22 +83,31 @@ public class Epidemic {
         int i = 0;
         int perim = use.size()*2 + use.get(0).length()*2;
         int touching = 0;
+        int iLine =0;
+        int variable = 0;
         for (int row = 0; row < use.size(); row++) {
             for (int col = 0; col < use.get(row).length(); col++) {
                 if (use.get(row).substring(col, col + 1).equals("I")) {
                     touching = touching + iCheck(use, row, col);
                     i++;
+                    iLine++;
+                    if(iLine==use.get(row).length()-1){
+                        variable = variable +2;
+                    }
+                }else {
+                    iLine = 0;
                 }
             }
         }
         //System.out.println("I: "+i);
         //System.out.println("Perim: "+perim);
         //System.out.println("Touching: "+touching);
-        return (((i*4)+perim)-touching);
+        return (((i*4)+perim)-touching+variable);
     }
     //Rank should  return an arraylist with infected in compulsary places
     //It could also return a second arraylist with ranking of squares.
     public ArrayList<String> rank(ArrayList<String> use) {
+
         for (int row = 0; row < use.size(); row++) {
             for (int col = 0; col < use.get(row).length(); col++) {
                 if (use.get(row).substring(col, col + 1).equals(".")) {
@@ -132,12 +145,12 @@ public class Epidemic {
             //System.out.println("Here is achieved");
             int col = -1;
             int row = -1;
-            int biggest = 100;
+            int biggest = 2147483645;
             //Find biggest weight
             for (int i = 0; i < weight.size(); i++) {
                 for (int j = 0; j < weight.get(i).size(); j++) {
-                    if(on<15) {
-                      // System.out.print(weight.get(i).get(j)+" ");
+                    if(weight.get(i).get(j)==-900) {
+                       return theFinal;
                     }
                     if (weight.get(i).get(j) < biggest && weight.get(i).get(j)>0) {
                         col = j;
@@ -164,6 +177,7 @@ public class Epidemic {
                 }
                 //System.out.println(row+" "+col);
                 use.set(row, str);
+
             }else{
                 int greatest = -1;
                 for(int i = 0; i<weight.size();i++){
@@ -184,6 +198,7 @@ public class Epidemic {
                     }
                     //System.out.println(row+" "+col);
                     use.set(row, str);
+
                 }
             }
             ArrayList<String> temp = new ArrayList<>();
@@ -202,30 +217,6 @@ public class Epidemic {
             if(set == 0){
                 complete = false;
             }
-            if(on<15){
-                for(int i =0; i<use.size();i++){
-                    System.out.println(use.get(i)+" "+on);
-                }
-                System.out.println();
-            }
-            if(on<15){
-                for(int i =0; i<use.size();i++){
-                    System.out.println(use.get(i)+" "+on);
-                }
-                System.out.println();
-            }
-            for (int i = 0; i < weight.size(); i++) {
-                for (int j = 0; j < weight.get(i).size(); j++) {
-                    if(on<15) {
-                        System.out.print(weight.get(i).get(j)+" ");
-                    }
-
-                }
-                if(on<15) {
-                    System.out.println();
-                }
-
-            }
 
         }
 
@@ -238,9 +229,12 @@ public class Epidemic {
     of them, then weights accordingly.
     returns the weight array.
      */
+    private int ba = 0;
     public ArrayList<ArrayList<Integer>> getNew(ArrayList<String> use, int on, int depth){
-
-        use = finalState(use);
+        //use = finalState(use);
+//                for(int ad = 0; ad<use.size();ad++){
+//                           System.out.println(use.get(ad));
+//                        }
         ArrayList<ArrayList<Integer>> weight = new ArrayList<>();
         //Filling weight array to be same size as use
         for(int i  = 0; i<use.size();i++){
@@ -251,54 +245,76 @@ public class Epidemic {
             }
         }
 
-        //If I is found, the wieght is set negative 30
+        //If I is found, the weight is set negative 30
         //If S is found creates a temp array with all possible S locations
+        int g = 0;
         for (int row = 0; row < use.size(); row++) {
             for (int col = 0; col < use.get(row).length(); col++) {
+                //System.out.println(g);
+                g++;
                 if (use.get(row).substring(col, col + 1).equals("I")) {
                     weight.get(row).set(col, -45);
                 }
                     //System.out.println("Checking "+col);
                 if (use.get(row).substring(col, col + 1).equals("S")) {
                     weight.get(row).set(col, -30);
-//                    if(on<15){
-//                        System.out.println(row+" "+col);
-//                        System.out.println();
-//                    }
-                    //System.out.println("Iteration: "+ col+" "+row);
 
-                }
-                if (use.get(row).substring(col, col + 1).equals(".")) {
-                    int five = possibleS(use, row, col, on);
-                    if(five != -45){
-                        weight.get(row).set(col, five);
-                    }
                 }
                 //Creates a temp array version of use and replaces  a single . with S, and then at the ahead
                 //possibilities according to look ahead.
                 if (use.get(row).substring(col, col + 1).equals(".")) {
-                    for (int index = 0; index < depth + 1; index++) {
-
                         //Set the . to an S
                         ArrayList<String> temp = new ArrayList<>();
                         for (int i = 0; i < use.size(); i++) {
+                           // System.out.println(use.get(i));
                             temp.add(use.get(i));
                         }
+                    ArrayList<String> temp2 = new ArrayList<>();
+                    for (int i = 0; i < use.size(); i++) {
+                        // System.out.println(use.get(i));
+                        temp2.add(use.get(i));
+                    }
+                        temp = finalState(temp);
+                       // System.out.println();
                         String str = temp.get(row);
                         if (col == temp.get(row).length() - 1) {
                             str = str.substring(0, col) + "S";
                         } else {
                             str = str.substring(0, col) + "S" + str.substring(col + 1);
                         }
-                        temp.set(row, str);
-
-
-                        
-                        int five = possibleS(temp, row, col, on);
-                        if (five != -45) {
-                            weight.get(row).set(col, five);
+                        String str1 = temp.get(row);
+                        if (col == temp2.get(row).length() - 1) {
+                            str1 = str1.substring(0, col) + "S";
+                        } else {
+                            str1 = str1.substring(0, col) + "S" + str1.substring(col + 1);
                         }
-                    }
+                        temp.set(row, str);
+                        temp2.set(row, str1);
+
+                        ba = 0;
+                            temp = finalState(temp);
+                            int stop = 0;
+                            for(int check = 0; check <temp.size();check++){
+                                for(int check2 = 0; check2<temp.get(check).length(); check2++){
+                                   if(temp.get(check).substring(check2,check2+1).equals("S")){
+                                       stop ++;
+                                   }
+                                }
+                            }
+                            int set = 0;
+                           // if(stop<=county){
+                                set = depth(temp, depth, temp2);
+                           //}
+
+                            if(set==-5){
+                                for(int i  = 0; i<use.size();i++){
+                                    for(int j =0;j<use.get(0).length();j++){
+                                        weight.get(i).set(j, -900);
+                                    }
+                                }
+                                return weight;
+                            }
+                            weight.get(row).set(col, set);
                 }
             }
         }
@@ -306,6 +322,88 @@ public class Epidemic {
         return weight;
     }
 
+
+    public int depth(ArrayList<String> temp1, int deep, ArrayList<String> temp2) {
+        //System.out.println(ba);
+        ba++;
+        int finalSet = 35;
+        if (deep > 0) {
+            for (int row = 0; row < temp1.size(); row++) {
+                for (int col = 0; col < temp1.get(row).length(); col++) {
+                    int set = 0;
+                    ArrayList<String> temp = new ArrayList<>();
+                    for (int i = 0; i < temp1.size(); i++) {
+                        // System.out.println(use.get(i));
+                        temp.add(temp1.get(i));
+                    }
+
+                    ArrayList<String> tempBones = new ArrayList<>();
+                    for (int i = 0; i < temp2.size(); i++) {
+                        // System.out.println(use.get(i));
+                        tempBones.add(temp2.get(i));
+                    }
+
+                    if(temp.get(row).substring(col,col+1).equals(".")){
+                        String str = temp.get(row);
+                        if (col == temp.get(row).length() - 1) {
+                            str = str.substring(0, col) + "S";
+                        } else {
+                            str = str.substring(0, col) + "S" + str.substring(col + 1);
+                        }
+                        String str1 = tempBones.get(row);
+                        if (col == temp.get(row).length() - 1) {
+                            str1 = str1.substring(0, col) + "S";
+                        } else {
+                            str1 = str1.substring(0, col) + "S" + str1.substring(col + 1);
+                        }
+                        tempBones.set(row,str1);
+                        temp.set(row, str);
+                        temp = finalState(temp);
+                        int check = 0;
+                        for (int i = 0; i < tempBones.size(); i++) {
+                            for (int j = 0; j < tempBones.get(i).length(); j++) {
+                                if(tempBones.get(i).substring(j,j+1).equals("S")){
+                                    set++;
+                                }
+                                if(temp.get(i).substring(j,j+1).equals(".")){
+                                    check++;
+                                }
+                            }
+                        }
+//                        for(int ad = 0; ad<tempBones.size();ad++){
+//                            System.out.println(tempBones.get(ad));
+//                        }
+//
+//                        System.out.println(set);
+                        //System.out.println(set);
+                        if(check==0){
+                            if(set == county) {
+                                for(int oh = 0; oh<tempBones.size();oh++){
+                                    theFinal = tempBones;
+                                    return -5;
+                                }
+                            }
+                        }
+                        int num = 0;
+                        if(set<county) {
+                            num = depth(temp, deep - 1, tempBones);
+                        }
+                        set = set + num;
+                        if(num==-5){
+                            return -5;
+                        }
+                    }
+                    if(set<finalSet){
+                        finalSet = set;
+                    }
+                }
+            }
+            //System.out.println("PING MASTER "+set);
+            return finalSet;
+        }
+
+        return 0;
+    }
         /*
        1 row-2,col
        2 row-1,col+1
@@ -453,6 +551,7 @@ public class Epidemic {
             String infect = use.get(row);
             infect = infect.substring(0,col) +"S"+infect.substring(col+1);
             use.set(row, infect);
+            amountOfS = amountOfS +1;
         }
         return use;
     }
