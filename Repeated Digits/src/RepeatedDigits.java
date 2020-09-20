@@ -22,15 +22,17 @@ public class RepeatedDigits {
         if(line.startsWith("A") || line.startsWith("B")) {
 
             String[] use = line.split(" ");
-            System.out.println(Arrays.deepToString(use)+" "+ use.length);
+
             if (use.length==3) {
                 if (use[0].equals("A")) {
-                    System.out.println("A");
+                    System.out.print("A ");
                     partA(use);
                 } else {
-                    System.out.println("B");
+                    System.out.print("B ");
                     partB(use);
                 }
+            }else{
+                System.out.println("Bad line: "+Arrays.deepToString(use));
             }
         }
         return false;
@@ -53,17 +55,16 @@ public class RepeatedDigits {
         number.add(0);
 
         while(count<n){
-            if(increment) {
-                number.set(number.size() - 1, number.get(number.size() - 1) + 1);
-            }else{
-                increment = true;
-            }
+            //System.out.println(number+ " "+ " "+ count);
+
+            number.set(number.size() - 1, number.get(number.size() - 1) + 1);
+            //System.out.println(number+ " "+ " "+ count);
             count ++;
-            System.out.println(number+ " "+ " "+ count);
+
             //Will add numbers to start of array as number gets bigger
             if(base == number.get(number.size()-1)){
                 number.set(number.size()-1, 0);
-                increment = false;
+               // increment = false;
                 number.set(number.size()-2,number.get(number.size()-2)+1);
                 for(int i = number.size()-1; i>-1; i--){
                     if(number.get(i)==base){
@@ -77,33 +78,34 @@ public class RepeatedDigits {
                 }
             }
 
-            boolean isRepeat = false;
-            if(increment) {
+
+                isBlock = false;
                 for (int i = 0; i < number.size(); i++) {
-                    int check = 0;
-                    for (int j = 0; j < number.size(); j++) {
+
+                    //System.out.println(i);
+                    for (int j = i; j < number.size(); j++) {
                         if (i != j) {
+                            //System.out.println(number.get(i) + " " + number.get(j) );
                             if (number.get(i) == number.get(j)) {
                                 //System.out.println(number + "   " + "c");
-                                System.out.println(number.get(i) + " " + number.get(j) + " " + blockInt);
-                                isRepeat = true;
-                                check++;
-                                if (check > blockCount) {
+                                //System.out.println(number.get(i) + " " + number.get(j) + " " + blockInt);
                                     isBlock = true;
-                                }
                             }
                         }
                     }
                 }
-            }
-            if(!isRepeat){
+
+
+            //System.out.println();
+            if(!isBlock){
                 blockCount = 0;
             }
-
+            //System.out.println(number+ " "+ blockCount+" "+ count);
             if(isBlock){
                 blockCount ++;
                 if(blockCount == 1){
                     blockInt = count;
+
                 }
                 if(blockCount> finalBlockCount){
                     finalBlockCount = blockCount;
@@ -111,7 +113,7 @@ public class RepeatedDigits {
                 }
             }
         }
-        System.out.println(finalBlockInt+1+" "+finalBlockCount);
+        System.out.println(finalBlockInt+" "+finalBlockCount);
         return true;
     }
 
@@ -136,11 +138,9 @@ public class RepeatedDigits {
             base2Count ++;
             currentCountDec ++;
 
-            if(increment1) {
+
                 base1Number.set(base1Number.size() - 1, base1Number.get(base1Number.size() - 1) + 1);
-            }else{
-                increment1 = true;
-            }
+
             //System.out.println(base1Number+ " "+ current+ " "+ count);
             //Will add numbers to start of array as number gets bigger
             base1Count++;
@@ -159,11 +159,9 @@ public class RepeatedDigits {
                     }
                 }
             }
-            if(increment2) {
+
                 base2Number.set(base2Number.size() - 1, base2Number.get(base2Number.size() - 1) + 1);
-            }else{
-                increment2 = true;
-            }
+
             base2Count ++;
             //Will add numbers to start of array as number gets bigger
             if(base2 == base2Number.get(base2Number.size()-1)){
@@ -181,20 +179,20 @@ public class RepeatedDigits {
                     }
                 }
             }
-            if (base2 == base2Count) {
-                base2Count = 0;
-                base2Number.set(base2Number.size() - 1, base2Number.get(base2Number.size() - 1) + 1);
-                for (int i = base2Number.size() - 1; i > -1; i--) {
-                    if (base2Number.get(i) == base2) {
-                        base2Number.set(i, 0);
-                        if (i == 0) {
-                            base2Number.add(0, 1);
-                        } else {
-                            base2Number.set(i - 1, base2Number.get(i - 1) + 1);
-                        }
-                    }
-                }
-            }
+//            if (base2 == base2Count) {
+//                base2Count = 0;
+//                base2Number.set(base2Number.size() - 1, base2Number.get(base2Number.size() - 1) + 1);
+//                for (int i = base2Number.size() - 1; i > -1; i--) {
+//                    if (base2Number.get(i) == base2) {
+//                        base2Number.set(i, 0);
+//                        if (i == 0) {
+//                            base2Number.add(0, 1);
+//                        } else {
+//                            base2Number.set(i - 1, base2Number.get(i - 1) + 1);
+//                        }
+//                    }
+//                }
+//            }
             boolean b1 = false;
             boolean b2 = false;
             for(int i = 0; i<base1Number.size(); i++){
@@ -219,11 +217,11 @@ public class RepeatedDigits {
 
             if(b2 && b1){
                 done = false;
+
             }
-           // System.out.println(base2Number+" "+base1Number+" "+currentCountDec);
+            System.out.println(base2Number+" "+base1Number+" "+currentCountDec);
         }
         System.out.println(currentCountDec);
         return true;
     }
-
 }
