@@ -122,6 +122,7 @@ public class Anagrams {
 
     public void anagramFinder(){
         for(String each : words){
+            finalOutput.clear();
             if (!hashFind(each)) {
                 anagramPool(each);
                 if(!depthSearch(each)){
@@ -136,10 +137,11 @@ public class Anagrams {
                     finalOutput.add(each + ": " +outputString);
                 }
             }
+            for(int i = 0; i<finalOutput.size();i++){
+                System.out.println(finalOutput.get(i));
+            }
         }
-        for(int i = 0; i<finalOutput.size();i++){
-            System.out.println(finalOutput.get(i));
-        }
+
     }
 
     /*Will check hash array for for 1 word or 2 word anagrams, if found will add them
@@ -191,7 +193,6 @@ public class Anagrams {
                 }
             }
         }
-
         //Iterates through alphabet arrays
         for(int i = 0; i<alphaCheck.length; i++){
             if(alphaCheck[i]){
@@ -281,7 +282,9 @@ public class Anagrams {
                         return true;
                     }
                 } else if (letters.equals("-1")) {
-                    deepening(letters1, anagramArray.get(count + 1), count + 1, useArray);
+                    if(useArray.size()<bestCaseSize) {
+                        deepening(letters1, anagramArray.get(count + 1), count + 1, useArray);
+                    }
                 } else {
                     useArray.add(anagramWord);
                     if (useArray.size() < bestCaseSize) {
@@ -296,7 +299,7 @@ public class Anagrams {
                         }
                     }
                 }
-            }else{
+            }else if(useArray.size()<bestCaseSize){
             deepening(letters1, anagramArray.get(count + 1), count + 1, useArray);
             }
         }else{
@@ -324,7 +327,9 @@ public class Anagrams {
                     }
                     else{
                         useArray.add(anagramWord);
-                         deepening(letters, anagramArray.get(count), count, useArray);
+                        if(useArray.size()<bestCaseSize) {
+                            deepening(letters, anagramArray.get(count), count, useArray);
+                        }
                     }
                 }
             }
