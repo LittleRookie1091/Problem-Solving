@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Social Distancing.iml" filepath="$PROJECT_DIR$/Social Distancing.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SocialDistancing.iml" filepath="$PROJECT_DIR$/SocialDistancing.iml" />
     </modules>
   </component>
 </project>

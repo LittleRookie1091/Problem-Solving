@@ -125,14 +125,14 @@ public class Anagrams {
         for(String each : words){
             deepArray = 0;
             finalOutput.clear();
-           // System.out.println("Hashing:");
-           // System.out.println();
+            System.out.println("Hashing:");
+            System.out.println();
             if (!hashFind(each)) {
-                //System.out.println("Hashing complete, anagram pooling");
-                //System.out.println();
+                System.out.println("Hashing complete, anagram pooling");
+                System.out.println();
                 anagramPool(each);
-                //System.out.println("Anagram pooling complete");
-               // System.out.println();
+                System.out.println("Anagram pooling complete");
+                System.out.println();
                 if(!depthSearch(each)){
                     finalOutput.add(each + ": " );
                 }else{
@@ -146,14 +146,14 @@ public class Anagrams {
                     finalOutput.add(each + ": " +outputString);
                 }
             }
-            //System.out.println();
-            //System.out.println("Depth search amount: "+deepArray);
-            //System.out.println();
+            System.out.println();
+            System.out.println("Depth search amount: "+deepArray);
+            System.out.println();
             for(int i = 0; i<finalOutput.size();i++){
                 System.out.println(finalOutput.get(i));
             }
-           //System.out.println();
-            //System.out.println("----------Next Word-----------");
+            System.out.println();
+            System.out.println("----------Next Word-----------");
         }
 
     }
@@ -166,7 +166,7 @@ public class Anagrams {
         String use = permutations(word);
         if(hash.get(use) != null){
             finalOutput.add(word + ": "+ hash.get(use));
-            //System.out.println("HASHFOUND");
+            System.out.println("HASHFOUND");
             return true;
         }else{
             for(int i = use.length()-1; i!= -1; i--){
@@ -174,14 +174,14 @@ public class Anagrams {
                 if(hash.get(use.charAt(i)) != null &&
                         sub != null){
                     finalOutput.add(word + ": "+ hash.get(use.charAt(i))+ " "+ sub);
-                    //System.out.println("HASHFOUND");
+                    System.out.println("HASHFOUND");
                     return true;
                 }
                 sub = hash.get(use.substring(i));
                 String dom = hash.get(use.substring(0,i));
                 if(dom != null && sub != null){
                     finalOutput.add(word + ": "+ dom+ " "+ sub);
-                    //System.out.println("HASHFOUND");
+                    System.out.println("HASHFOUND");
                     return true;
                 }
             }
@@ -250,13 +250,13 @@ public class Anagrams {
         depthCheck = -1;
         bestCase.clear();
         bestCaseSize = word.length();
-        //System.out.println("Anagram pool of words of size: "+ anagramArray.size());
-       // System.out.println(anagramArray );
+        System.out.println("Anagram pool of words of size: "+ anagramArray.size());
+        System.out.println(anagramArray );
 
         //System.out.println(anagramArray);
         for(int i = 0; i<anagramArray.size(); i++) {
          ArrayList<String> useArray = new ArrayList<String>();
-           // System.out.println(i+"/"+(anagramArray.size())+"    "+bestCaseSize);
+            System.out.println(i+"/"+(anagramArray.size())+"    "+bestCaseSize);
             deepening(letters, anagramArray.get(i), i, useArray);
             globalNum++;
         }
@@ -295,7 +295,7 @@ public class Anagrams {
                             bestCase.add(useArray.get(i));
                         }
                         bestCaseSize = bestCase.size();
-                        //System.out.println("New case");
+                        System.out.println("New case");
                         return true;
                     }else if(bestCaseSize== 100){
                         bestCase.clear();
