@@ -6,6 +6,33 @@ public class Epidemic {
     private int area;
     private int amountOfS = 0;
     private ArrayList<String> theFinal;
+
+    private class Node{
+        public int getRow() {
+            return row;
+        }
+
+        public void setRow(int row) {
+            this.row = row;
+        }
+
+        public int getCol() {
+            return col;
+        }
+
+        public void setCol(int col) {
+            this.col = col;
+        }
+
+        private int row;
+        private int col;
+        public Node(int row, int col){
+            this.row = row;
+            this.col = col;
+        }
+
+
+    }
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         Epidemic main = new Epidemic();
@@ -41,7 +68,6 @@ public class Epidemic {
                 }
             }
         }
-        int perim = (2 * length) + (2 * width) + (immune * 4);
         if (sick > 0) {
             System.out.println("");
             finalState(use);
@@ -71,14 +97,136 @@ public class Epidemic {
         }
         county = bestScount;
         use = rank(use);
-        System.out.println(bestScount);
-        use = lookAhead(use, bestScount-amountOfS);
+        //System.out.println(bestScount);
+        use = findOptimal(use);
+        int amountOfS = countS(use);
+        System.out.println(amountOfS);
         for (int i = 0; i < use.size(); i++) {
             System.out.println(use.get(i));
         }
+        System.out.println();
         return false;
     }
 
+    public int countS(ArrayList<String> use){
+        int s = 0;
+        for (int i = 0; i < use.size(); i++) {
+            for(int j = 0; j<use.get(i).length();j++) {
+                if(use.get(i).substring(j, j +1).equals("S")){
+                    s++;
+                }
+            }
+        }
+        return s;
+    }
+    public  ArrayList<String> findOptimal(ArrayList<String> use){
+        ArrayList<String> temp;
+        ArrayList<Integer> row = new ArrayList<>();
+        ArrayList<Integer> col = new ArrayList<>();
+        for(int i = 0; i< use.size();i++){
+            for(int j = 0; j<use.get(i).length();j++){
+                if(use.get(i).substring(j,j+1).equals("S")){
+                    row.add(i);
+                    col.add(j);
+                }
+            }
+        }
+        int amount, rowNew, colNew;
+        boolean check = true;
+        int ace = 0;
+        while(check){
+            amount = 900000;
+            rowNew = 0;
+            colNew = 0;
+//            if(ace<10) {
+//                for (int i = 0; i < use.size(); i++) {
+//                    System.out.println(use.get(i));
+//                }
+//                System.out.println();
+//            }
+            ace++;
+            if(row.size()>0){
+                for(int i = 0; i<row.size();i++){
+                    int  rowNum = row.get(i);
+                    int colNum = col.get(i);
+                    ArrayList<Node> children = getChildren(rowNum, colNum, use);
+                    for(int child = 0; child<children.size();child++){
+                        ArrayList<String> childArray = newArray(use);
+                        childArray = finalState(childArray);
+                        childArray = insertS(childArray, children.get(child).getRow(), children.get(child).getCol());
+                        //System.out.println(children.get(child).getRow()+" "+children.get(child).getCol());
+                        childArray = finalState(childArray);
+                        int dots = countDots(childArray);
+                        //System.out.println(dots);
+                        if(dots<amount){
+                            amount = dots;
+                            rowNew = children.get(child).getRow();
+                            colNew = children.get(child).getCol();
+                        }
+                    }
+                }
+            }
+            use = insertS(use, rowNew, colNew);
+            row.add(rowNew);
+            col.add(colNew);
+            temp = newArray(use);
+            temp = finalState(temp);
+            if(countDots(temp)==0){
+                check = false;
+            }
+        }
+        return use;
+    }
+
+    //Counts the dots in the array
+    public int countDots(ArrayList<String> use){
+        int dots = 0;
+        for(int i =0; i<use.size();i++){
+            for(int j = 0; j<use.get(i).length();j++){
+                if(use.get(i).substring(j,j+1).equals(".")){
+                    dots++;
+                }
+            }
+        }
+        return dots;
+    }
+
+    //Sets the specified element in array to be S
+    public ArrayList<String> insertS(ArrayList<String> use, int row, int col){
+        String str = use.get(row);
+        str = str.substring(0,col)+"S"+str.substring(col+1);
+        use.set(row, str);
+        return use;
+    }
+
+    //Creates a new array so as to not effect the original
+    public ArrayList<String> newArray(ArrayList<String> use){
+        ArrayList<String> newArray = new ArrayList<>();
+        for(int i = 0; i<use.size(); i++){
+            newArray.add(use.get(i));
+        }
+        return newArray;
+    }
+
+    public ArrayList<Node> getChildren(int row, int col, ArrayList<String> use){
+        ArrayList<Node> nodes = new ArrayList<>();
+        for(int i = row-2; i<row+3;i++){
+            for(int j = col-2; j<col+3;j++){
+                if(i>-1 && i<use.size() && j>-1 && j<use.get(i).length()){
+                    int rowN = java.lang.Math.abs(i-row);
+                    int colN = java.lang.Math.abs(j-col);
+                    if((rowN+colN)<3){
+                        if(!use.get(i).substring(j,j+1).equals("S") && !use.get(i).substring(j,j+1).equals("I")) {
+                            Node node = new Node(i, j);
+                            nodes.add(node);
+                        }
+                    }
+                }
+            }
+        }
+        return nodes;
+    }
+    //Finds an estimated guess of the most efficient amount of S
     public int mostEfficient(ArrayList<String>use){
         int i = 0;
         int perim = use.size()*2 + use.get(0).length()*2;
@@ -104,6 +252,7 @@ public class Epidemic {
         //System.out.println("Touching: "+touching);
         return (((i*4)+perim)-touching+variable);
     }
+
     //Rank should  return an arraylist with infected in compulsary places
     //It could also return a second arraylist with ranking of squares.
     public ArrayList<String> rank(ArrayList<String> use) {
@@ -118,135 +267,7 @@ public class Epidemic {
         return use;
     }
 
-    
-    /*
-    Creates a weight array with 0's, goes through the possible S positions, and sees outcome
-    of them, then weights accordingly.
-    returns the weight array.
-     */
-    private int ba = 0;
-    public ArrayList<ArrayList<Integer>> getNew(ArrayList<String> use, int on, int depth){
-        //use = finalState(use);
-//                for(int ad = 0; ad<use.size();ad++){
-//                           System.out.println(use.get(ad));
-//                        }
-        ArrayList<ArrayList<Integer>> weight = new ArrayList<>();
-        //Filling weight array to be same size as use
-        for(int i  = 0; i<use.size();i++){
-            ArrayList<Integer> a = new ArrayList<>();
-            weight.add(a);
-            for(int j =0;j<use.get(0).length();j++){
-                weight.get(i).add(0);
-            }
-        }
-
-        //If I is found, the weight is set negative 30
-        //If S is found creates a temp array with all possible S locations
-        int g = 0;
-        for (int row = 0; row < use.size(); row++) {
-            for (int col = 0; col < use.get(row).length(); col++) {
-                //System.out.println(g);
-                g++;
-                if (use.get(row).substring(col, col + 1).equals("I")) {
-                    weight.get(row).set(col, -45);
-                }
-                    //System.out.println("Checking "+col);
-                if (use.get(row).substring(col, col + 1).equals("S")) {
-                    weight.get(row).set(col, -30);
-
-                }
-                //Creates a temp array version of use and replaces  a single . with S, and then at the ahead
-                //possibilities according to look ahead.
-                if (use.get(row).substring(col, col + 1).equals(".")) {
-                        //Set the . to an S
-                        ArrayList<String> temp = new ArrayList<>();
-                        for (int i = 0; i < use.size(); i++) {
-                           // System.out.println(use.get(i));
-                            temp.add(use.get(i));
-                        }
-                    ArrayList<String> temp2 = new ArrayList<>();
-                    for (int i = 0; i < use.size(); i++) {
-                        // System.out.println(use.get(i));
-                        temp2.add(use.get(i));
-                    }
-                        temp = finalState(temp);
-                       // System.out.println();
-                        String str = temp.get(row);
-                        if (col == temp.get(row).length() - 1) {
-                            str = str.substring(0, col) + "S";
-                        } else {
-                            str = str.substring(0, col) + "S" + str.substring(col + 1);
-                        }
-                        String str1 = temp.get(row);
-                        if (col == temp2.get(row).length() - 1) {
-                            str1 = str1.substring(0, col) + "S";
-                        } else {
-                            str1 = str1.substring(0, col) + "S" + str1.substring(col + 1);
-                        }
-                        temp.set(row, str);
-                        temp2.set(row, str1);
-
-                        ba = 0;
-                            temp = finalState(temp);
-                            int stop = 0;
-                            for(int check = 0; check <temp.size();check++){
-                                for(int check2 = 0; check2<temp.get(check).length(); check2++){
-                                   if(temp.get(check).substring(check2,check2+1).equals("S")){
-                                       stop ++;
-                                   }
-                                }
-                            }
-                            int set = 0;
-                           // if(stop<=county){
-                                set = depth(temp, depth, temp2);
-                           //}
-
-                            if(set==-5){
-                                for(int i  = 0; i<use.size();i++){
-                                    for(int j =0;j<use.get(0).length();j++){
-                                        weight.get(i).set(j, -900);
-                                    }
-                                }
-                                return weight;
-                            }
-                            weight.get(row).set(col, set);
-                }
-            }
-        }
-
-        return weight;
-    }
-
-    public boolean s3InARow( ArrayList<String> tempBones){
-        int x = 0;
-        for(int i = 0; i<tempBones.size();i++){
-            for(int j = 0; j<tempBones.get(i).length();j++){
-                if(tempBones.get(i).substring(j,j+1).equals("S")){
-                    x++;
-                }else{
-                    x = 0;
-                }
-                if(x >=3){
-                    return false;
-                }
-            }
-        }
-        x =0;
-        for(int i = 0; i<tempBones.get(0).length();i++){
-            for(int j = 0; j<tempBones.size();j++){
-                if(tempBones.get(j).substring(i,i+1).equals("S")){
-                    x++;
-                }else{
-                    x = 0;
-                }
-                if(x >=3){
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
+    //Finds the final state
     public ArrayList<String> finalState(ArrayList<String> use) {
         int rCount = 1;
 //        for(int i = 0; i<use.size();i++) {
