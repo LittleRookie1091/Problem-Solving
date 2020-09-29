@@ -67,13 +67,16 @@ public class RepeatedDigits {
     }
 
     public boolean checkRepeat(ArrayList<Integer> use){
+        HashMap<Integer, Integer> check = new HashMap<>();
         for(int i = 0; i<use.size();i++){
-            for(int j = i+1; j< use.size(); j++){
-                if(use.get(i).equals(use.get(j))){
-                    return true;
-                }
+            if(check.containsKey(use.get(i))){
+                return true;
+            }else{
+                check.put(use.get(i), 1);
             }
         }
+
+
         return false;
     }
 
