@@ -210,12 +210,13 @@ public class Epidemic {
 
     public ArrayList<Node> getChildren(int row, int col, ArrayList<String> use){
         ArrayList<Node> nodes = new ArrayList<>();
-        for(int i = row-3; i<row+4;i++){
-            for(int j = col-3; j<col+4;j++){
+        int num = 5;
+        for(int i = row-num; i<row+num+1;i++){
+            for(int j = col-num; j<col+num+1;j++){
                 if(i>-1 && i<use.size() && j>-1 && j<use.get(i).length()){
                     int rowN = java.lang.Math.abs(i-row);
                     int colN = java.lang.Math.abs(j-col);
-                    if((rowN+colN)<4){
+                    if((rowN+colN)<num+1){
                         if(!use.get(i).substring(j,j+1).equals("S") && !use.get(i).substring(j,j+1).equals("I")) {
                             Node node = new Node(i, j);
                             nodes.add(node);

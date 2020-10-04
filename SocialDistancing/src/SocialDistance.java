@@ -4,6 +4,7 @@ public class SocialDistance {
     private int pathTotal = 0;
     private int rowV = 0;
     private int colV = 0;
+    private ArrayList<ArrayList<Boolean>> overallBool;
     private Node primeNode = new Node(null,0,0,0);
 
     /*
@@ -23,7 +24,7 @@ public class SocialDistance {
             a.add(row);
             a.add(col);
             use.add(0,a);
-           // System.out.println(row+" "+col);
+            //System.out.println(row+" "+col);
             if(parent != null){
                 return parent.print(use);
             }else{
@@ -184,7 +185,9 @@ public class SocialDistance {
             }
         }
         ArrayList<ArrayList<Boolean>> bool = createBool(use);
+        bool = copyBool(bool, overallBool);
         //bool = setBool(bool, node.getI(),use);
+       // printBool(overallBool);
         Node changeNode = new Node();
         for(int i = 1; i<=p;i++){
             boolean checker = true;
@@ -235,6 +238,15 @@ array.
             }
         }
         return bool;
+    }
+    public void printBool(ArrayList<ArrayList<Boolean>> bool){
+        for(int i = 0; i<bool.size();i++){
+            for(int j = 0; j<bool.get(i).size();j++){
+                System.out.print(bool.get(i).get(j)+" ");
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
     public ArrayList<ArrayList<Boolean>> copyBool(ArrayList<ArrayList<Boolean>> edit, ArrayList<ArrayList<Boolean>> bool){
         for(int i = 0; i<bool.size();i++){
@@ -347,18 +359,23 @@ This method will find the distance from each P to the path taken, and sum them.
             }
         }
         int distAdd = 0;
+        int potential = 10000;
         for(int i = 0; i<cood.size();i++){
             for(int j = 0; j<cood.get(i).length;j++){
                     if(cood.get(i)[j].equals("P")){
                         //if(checkMin(cood,i,j)){
                            // a = 0;
                       //  }
-                        distAdd = distAdd +dist(i, j, cood);
+                        int nu = dist(i, j, cood);
+                        distAdd = distAdd +nu;
+                        if(nu<potential){
+                            potential = nu;
+                        }
                     }
             }
         }
 
-        String finalString = "min "+a+", total "+distAdd;
+        String finalString = "min "+potential+", total "+distAdd;
 
         return finalString;
     }
@@ -404,6 +421,7 @@ Finds the best minimum distance for path to goal. Uses breadthsearch method
         Node node = setFirst(use, goalRow,goalCol);
         //System.out.println(node.getWord());
         int n = 0;
+        ArrayList<ArrayList<Boolean>> bestBool = createBool(use);
         while(findBest) {
             ArrayList<ArrayList<Boolean>> bool = new ArrayList<>();
             int p = 0;
@@ -419,8 +437,13 @@ Finds the best minimum distance for path to goal. Uses breadthsearch method
                     }
                 }
             }
-            bool = setBool(bool, n, use);
 
+            bool = setBool(bool, n, use);
+            ArrayList<ArrayList<Boolean>> setter = createBool(use);
+            setter = copyBool(setter, bool);
+            if(n<2){
+
+            }
             ArrayList<Node> children = new ArrayList<>();
             Node src = new Node(null, 0, 0, 0);
             children.add(src);
@@ -432,12 +455,16 @@ Finds the best minimum distance for path to goal. Uses breadthsearch method
             }else if(node1.getWord().equals("goalState")){
               //  System.out.println("2");
                 node = node1;
+                bestBool = copyBool(bestBool,setter);
             }else if(node1.getWord().equals("end")){
               //  System.out.println("3");
                 findBest = false;
             }
             n++;
         }
+        overallBool = createBool(use);
+        overallBool = copyBool(overallBool,bestBool);
+        //printBool(overallBool);
         //System.out.println(node.getWord()+" "+n);
         return node;
     }
