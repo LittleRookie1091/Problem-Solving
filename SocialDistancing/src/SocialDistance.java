@@ -4,8 +4,12 @@ public class SocialDistance {
     private int pathTotal = 0;
     private int rowV = 0;
     private int colV = 0;
+    private ArrayList<ArrayList<Boolean>> overallBool;
     private Node primeNode = new Node(null,0,0,0);
 
+    /*
+    Node will store information about coordinates and it's parent node in the breadthsearch
+     */
     private class Node{
         Node parent;
         int row;
@@ -20,7 +24,7 @@ public class SocialDistance {
             a.add(row);
             a.add(col);
             use.add(0,a);
-           // System.out.println(row+" "+col);
+            //System.out.println(row+" "+col);
             if(parent != null){
                 return parent.print(use);
             }else{
@@ -78,6 +82,10 @@ public class SocialDistance {
 
     }
 
+    /*
+    Fairly simple, takes in all the scenarios and formats it to work for the program
+    then calls the distance method on each scenario
+     */
     public static void main(String[] args){
        Scanner scan = new Scanner(System.in);
        ArrayList<ArrayList<String>> scenarios = new ArrayList<>();
@@ -177,7 +185,9 @@ public class SocialDistance {
             }
         }
         ArrayList<ArrayList<Boolean>> bool = createBool(use);
+        bool = copyBool(bool, overallBool);
         //bool = setBool(bool, node.getI(),use);
+       // printBool(overallBool);
         Node changeNode = new Node();
         for(int i = 1; i<=p;i++){
             boolean checker = true;
@@ -209,7 +219,11 @@ public class SocialDistance {
         return changeNode;
     }
 
-
+/*
+These boolean array methods handle the work with the boolean arrays used in checking for paths to goal state.
+As they are used multiple times, i made methods fro them, they simply create the new arrays without referencing a previous
+array.
+ */
     public ArrayList<ArrayList<Boolean>> createBool(ArrayList<String[]> use){
         ArrayList<ArrayList<Boolean>> bool = new ArrayList<>();
         for(int i = 0; i<use.size();i++){
@@ -224,6 +238,15 @@ public class SocialDistance {
             }
         }
         return bool;
+    }
+    public void printBool(ArrayList<ArrayList<Boolean>> bool){
+        for(int i = 0; i<bool.size();i++){
+            for(int j = 0; j<bool.get(i).size();j++){
+                System.out.print(bool.get(i).get(j)+" ");
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
     public ArrayList<ArrayList<Boolean>> copyBool(ArrayList<ArrayList<Boolean>> edit, ArrayList<ArrayList<Boolean>> bool){
         for(int i = 0; i<bool.size();i++){
@@ -284,7 +307,11 @@ public class SocialDistance {
         return bool;
     }
 
-
+/*
+As the program must find a path regardless of what position people are in, that means sometimes it must step over
+people, so this method sets the first iteration to be with 0 distance, which means the best route to the
+goal is very direct.
+ */
     public Node setFirst(ArrayList<String[]> use, int row, int col){
         ArrayList<ArrayList<Boolean>> bool = new ArrayList<>();
         int p = 0;
@@ -308,7 +335,9 @@ public class SocialDistance {
         return node;
     }
 
-
+/*
+This method will find the distance from each P to the path taken, and sum them.
+ */
     public String getPath(ArrayList<ArrayList<Integer>> use, ArrayList<String[]> cood, int a){
         ArrayList<Integer> row = new ArrayList<>();
         ArrayList<Integer> col = new ArrayList<>();
@@ -330,21 +359,30 @@ public class SocialDistance {
             }
         }
         int distAdd = 0;
+        int potential = 10000;
         for(int i = 0; i<cood.size();i++){
             for(int j = 0; j<cood.get(i).length;j++){
                     if(cood.get(i)[j].equals("P")){
                         //if(checkMin(cood,i,j)){
                            // a = 0;
                       //  }
-                        distAdd = distAdd +dist(i, j, cood);
+                        int nu = dist(i, j, cood);
+                        distAdd = distAdd +nu;
+                        if(nu<potential){
+                            potential = nu;
+                        }
                     }
             }
         }
 
-        String finalString = "min "+a+", total "+distAdd;
+        String finalString = "min "+potential+", total "+distAdd;
 
         return finalString;
     }
+
+    /*
+    Finds the disance from path to each P
+     */
     public int dist(int row, int col, ArrayList<String[]> use){
         int dist = 0;
         boolean check = true;
@@ -374,13 +412,16 @@ public class SocialDistance {
         return dist;
     }
 
-
+/*
+Finds the best minimum distance for path to goal. Uses breadthsearch method
+ */
     public Node search(ArrayList<String[]> use, int goalRow, int goalCol){
 
         boolean findBest = true;
         Node node = setFirst(use, goalRow,goalCol);
         //System.out.println(node.getWord());
         int n = 0;
+        ArrayList<ArrayList<Boolean>> bestBool = createBool(use);
         while(findBest) {
             ArrayList<ArrayList<Boolean>> bool = new ArrayList<>();
             int p = 0;
@@ -396,8 +437,13 @@ public class SocialDistance {
                     }
                 }
             }
-            bool = setBool(bool, n, use);
 
+            bool = setBool(bool, n, use);
+            ArrayList<ArrayList<Boolean>> setter = createBool(use);
+            setter = copyBool(setter, bool);
+            if(n<2){
+
+            }
             ArrayList<Node> children = new ArrayList<>();
             Node src = new Node(null, 0, 0, 0);
             children.add(src);
@@ -409,15 +455,25 @@ public class SocialDistance {
             }else if(node1.getWord().equals("goalState")){
               //  System.out.println("2");
                 node = node1;
+                bestBool = copyBool(bestBool,setter);
             }else if(node1.getWord().equals("end")){
               //  System.out.println("3");
                 findBest = false;
             }
             n++;
         }
+        overallBool = createBool(use);
+        overallBool = copyBool(overallBool,bestBool);
+        //printBool(overallBool);
         //System.out.println(node.getWord()+" "+n);
         return node;
     }
+
+    /*
+    The breadth search will start with top left and find all viable children considering
+    distance, and then repeats with the children to find the next generation of children, will
+    stop when it lands on the goal coordinates.
+     */
     public Node breadthSearch(ArrayList<ArrayList<Boolean>> bool, ArrayList<Node> children, int goalRow, int goalCol, int n, int p){
         boolean check = true;
         int rowSet = 0;
@@ -518,6 +574,5 @@ public class SocialDistance {
 
         return node1;
     }
-
 
 }
