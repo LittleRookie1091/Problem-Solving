@@ -99,6 +99,7 @@ public class Epidemic {
         use = rank(use);
         //System.out.println(bestScount);
         use = findOptimal(use);
+        use = edgeCase(use);
         int amountOfS = countS(use);
         System.out.println(amountOfS);
         for (int i = 0; i < use.size(); i++) {
@@ -106,6 +107,30 @@ public class Epidemic {
         }
         System.out.println();
         return false;
+    }
+
+    public ArrayList<String> edgeCase(ArrayList<String> use){
+        int check = 0;
+        for(int i = 0; i<use.size();i++){
+            for(int j = 0; j<use.get(i).length();j++){
+                if(use.get(i).substring(j,j+1).equals("S")) {
+                    if (i > 0 && i < use.size() && j > 0 && j < use.get(i).length() && i + 1 < use.size() && j + 2 < use.get(i).length()) {
+                        if (use.get(i).substring(j, j + 1).equals("S") && use.get(i).substring(j + 1, j + 2).equals("S") && use.get(i + 1).substring(j, j + 1).equals("S")) {
+                            String a = "." + use.get(i).substring(j + 1);
+                            use.set(0, a);
+                        }
+                    }
+                }
+                    if (i > 0 && i < use.size() && j > 0 && j < use.get(i).length() && i + 1 < use.size() && j + 2 < use.get(i).length()) {
+                        if (use.get(i).substring(j, j + 1).equals("S") && use.get(i).substring(j + 1, j + 2).equals("S") && use.get(i + 1).substring(j + 1, j + 2).equals("S")) {
+                            String a = use.get(i + 1).substring(j, j + 1) + "." + use.get(i + 1).substring(j + 2);
+                            use.set(0, a);
+                        }
+                    }
+                }
+        }
+
+        return use;
     }
 
     public int countS(ArrayList<String> use){
