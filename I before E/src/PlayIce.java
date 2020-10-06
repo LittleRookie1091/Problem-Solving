@@ -30,14 +30,38 @@ public class PlayIce {
         main.setRules();
         ArrayList<String> use = new ArrayList<>();
         use = main.initial(main.alphabet);
+        int leng = main.longestRule();
         //System.out.println(use);
         for(int i = 2;i<=main.maxer;i++){
-           use = main.amountOfWords(i, use);
+            if(i<leng) {
+                use = main.amountOfWords(i, use);
+            }else{
+
+            }
         }
         //System.out.println(main.number);
        // main.outPut();
     }
 
+    public int longestRule(){
+        String longest = "";
+        for(int i = 0; i<rules.size();i++){
+            String rule = rules.get(i)[0];
+            String len = "";
+            for(int j = 1; j<rules.get(i)[j].length();j++){
+                if(rules.get(i)[j].length()>len.length()) {
+                    len = rules.get(i)[j];
+                }
+            }
+            String utilise = rule + len;
+            if(utilise.length()>longest.length()){
+                longest = utilise;
+            }
+        }
+        return longest.length();
+    }
+
+    
     public void setRules(){
         //Set alphabet
         for(int i = 0; i< params.get(0).length();i++){
@@ -115,7 +139,6 @@ public class PlayIce {
                 }
             }
             number.put(iteration, (long) temp.size());
-            System.out.println(iteration+" "+temp.size());
             return temp;
     }
 
@@ -145,6 +168,9 @@ public class PlayIce {
         }
         return check;
     }
+
+
+
     public void outPut(){
         for(int i = 0; i<instances.size();i++){
             try {
