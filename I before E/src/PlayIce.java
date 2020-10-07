@@ -35,6 +35,7 @@ public class PlayIce {
         for(int i = 2;i<=main.maxer;i++){
             if(i<leng) {
                 use = main.amountOfWords(i, use);
+                main.number.put(i, (long) use.size());
             }else{
 
             }
@@ -61,8 +62,8 @@ public class PlayIce {
         return longest.length();
     }
 
-    
-    public void setRules(){
+
+    public void setRules() {
         //Set alphabet
         for(int i = 0; i< params.get(0).length();i++){
             alphabet.add(params.get(0).substring(i,i+1));
@@ -120,15 +121,12 @@ public class PlayIce {
     recurse with incremented number and useArray
      */
     public ArrayList<String> amountOfWords(int iteration, ArrayList<String> use) {
-            HashMap<String, Boolean> doubles = new HashMap<>();
             ArrayList<String> temp = new ArrayList<>();
             for (int i = 0; i < use.size(); i++) {
                 for (int j = 0; j < alphabet.size(); j++) {
                     String a = use.get(i) + alphabet.get(j);
-                    if(!doubles.containsKey(a)) {
-                        doubles.put(a, true);
                         if(rules.size()!=0) {
-                            if (checkRules(a, i, j, use)) {
+                            if (checkRules(a)) {
                                 temp.add(a);
                                 //System.out.println(a);
                             }
@@ -137,36 +135,28 @@ public class PlayIce {
                         }
                     }
                 }
-            }
-            number.put(iteration, (long) temp.size());
             return temp;
     }
 
-    public boolean checkRules(String a, int i, int j, ArrayList<String> use) {
-        boolean check = true;
+    public boolean checkRules(String a) {
+        boolean valid = true;
         //Go through each rule
-        for (int r = 0; r < rules.size(); r++) {
-            //Check if the bad letter sequence is present
-            if (a.lastIndexOf(rules.get(r)[0]) != -1) {
-                check = false;
-                int last = a.lastIndexOf(rules.get(r)[0]);
-                //Check if exception for bad letter sequence is present
-                for (int exc = 1; exc < rules.get(r).length; exc++) {
-                    String exception = rules.get(r)[exc];
-                    int len = exception.length();
-                    String b = use.get(i) + alphabet.get(j);
-                    //If word is smaller than exception then it cant have it
-                    if ((last - len) > -1) {
-                        int point = (last - len);
-                        b = b.substring(point, last);
-                        if (b.contains(exception)) {
-                            check = true;
-                        }
+        for(int i = 0; i<rules.size();i++){
+            int alpha = rules.get(i)[0].length();
+            String bet = a.substring(a.length()-alpha);
+            if(bet.equals(rules.get(i)[0])){
+                valid = false;
+                for(int j = 1; j< rules.get(i).length; j++){
+                    int x = a.length()-alpha;
+                    int y = (a.length()-alpha)-rules.get(i)[j].length();
+                    String it = a.substring(y, x);
+                    if(it.equals(rules.get(i)[j])){
+                        valid = true;
                     }
                 }
             }
         }
-        return check;
+        return valid;
     }
 
 
