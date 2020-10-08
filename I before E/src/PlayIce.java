@@ -41,15 +41,14 @@ public class PlayIce {
                 use = main.amountOfWords(i, use);
                 main.number.put(i, (long) use.size());
             } else {
-                numUse = main.amountChecked(use, i);
+                numUse = main.amountChecked(use,numUse, i);
             }
         }
-        //System.out.println(main.number);
+        // System.out.println(main.number);
         // main.outPut();
     }
 
-    public ArrayList<Integer> amountChecked(ArrayList<String> use, int index){
-        ArrayList<Integer> temp = new ArrayList<>();
+    public ArrayList<Integer> amountChecked(ArrayList<String> use, ArrayList<Integer> temp, int index){
         if(index==leng){
             temp = rules(use);
         }
@@ -60,7 +59,7 @@ public class PlayIce {
             }
             temp.add(num);
         }
-
+        number.put(index, (long) temp.size());
         return temp;
     }
 
