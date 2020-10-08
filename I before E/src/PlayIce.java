@@ -9,6 +9,8 @@ public class PlayIce {
     private ArrayList<String> alphabet = new ArrayList<String>();
     private ArrayList<String[]> rules = new ArrayList<>();
     private HashMap<Integer, Long> number = new HashMap<>();
+    private ArrayList<ArrayList<Integer>> location = new ArrayList<>();
+    private int leng = 0;
     private int maxer = 0;
 
     public static void main(String[] args) {
@@ -29,19 +31,78 @@ public class PlayIce {
         }
         main.setRules();
         ArrayList<String> use = new ArrayList<>();
+        ArrayList<Integer> numUse = new ArrayList<>();
         use = main.initial(main.alphabet);
-        int leng = main.longestRule();
+        main.leng = main.longestRule();
+
         //System.out.println(use);
         for (int i = 2; i <= main.maxer; i++) {
-            if (i < leng) {
+            if (i < main.leng) {
                 use = main.amountOfWords(i, use);
                 main.number.put(i, (long) use.size());
             } else {
-
+                numUse = main.amountChecked(use, i);
             }
         }
         //System.out.println(main.number);
         // main.outPut();
+    }
+
+    public ArrayList<Integer> amountChecked(ArrayList<String> use, int index){
+        ArrayList<Integer> temp = new ArrayList<>();
+        if(index==leng){
+            temp = rules(use);
+        }
+        for(int i = 0; i<location.size();i++){
+            int num = 0;
+            for(int j = 0; j<location.get(i).size();j++){
+                num  = num + location.get(i).get(j);
+            }
+            temp.add(num);
+        }
+
+        return temp;
+    }
+
+    /*
+    Sets up the temp array with the scores for each iteration so far, and sets up the location array
+
+    Location array: One array for each word, specifying it's precursor words indices
+     */
+    public ArrayList<Integer> rules(ArrayList<String> use){
+        ArrayList<Integer> temp = new ArrayList<>();
+        for(int i = 0; i<use.size();i++){
+            if(checkRules(use.get(i))){
+                ArrayList<Integer> newArray = new ArrayList<>();
+                location.add(newArray);
+                temp.add(1);
+            }else{
+                ArrayList<Integer> newArray = new ArrayList<>();
+                location.add(newArray);
+                temp.add(0);
+            }
+        }
+        for(int i = 0; i< location.size(); i++){
+            String a = use.get(i);
+            for(int j = 0; j<use.size();j++){
+                if(precursor(a, use.get(j))){
+                    location.get(i).add(j);
+                }
+            }
+        }
+        return temp;
+    }
+
+    public boolean precursor(String first, String second){
+        boolean works = false;
+        String checkA = second.substring(1)+first.substring(first.length()-2);
+        String checkB = second + first.substring(first.length()-2);
+        if(first.equals(checkA)){
+            if(checkRules(checkB)){
+                works = true;
+            }
+        }
+        return works;
     }
 
     public int longestRule() {
@@ -61,7 +122,6 @@ public class PlayIce {
         }
         return longest.length();
     }
-
 
     public void setRules() {
         //Set alphabet
