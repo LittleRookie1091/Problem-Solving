@@ -94,8 +94,8 @@ public class PlayIce {
 
     public boolean precursor(String first, String second){
         boolean works = false;
-        String checkA = second.substring(1)+first.substring(first.length()-2);
-        String checkB = second + first.substring(first.length()-2);
+        String checkA = second.substring(1)+first.substring(first.length()-1);
+        String checkB = second + first.substring(first.length()-1);
         if(first.equals(checkA)){
             if(checkRules(checkB)){
                 works = true;
@@ -202,15 +202,19 @@ public class PlayIce {
         //Go through each rule
         for (int i = 0; i < rules.size(); i++) {
             int alpha = rules.get(i)[0].length();
-            String bet = a.substring(a.length() - alpha);
-            if (bet.equals(rules.get(i)[0])) {
-                valid = false;
-                for (int j = 1; j < rules.get(i).length; j++) {
-                    int x = a.length() - alpha;
-                    int y = (a.length() - alpha) - rules.get(i)[j].length();
-                    String it = a.substring(y, x);
-                    if (it.equals(rules.get(i)[j])) {
-                        valid = true;
+            if(!(alpha>a.length())) {
+                String bet = a.substring(a.length() - alpha);
+                if (bet.equals(rules.get(i)[0])) {
+                    valid = false;
+                    for (int j = 1; j < rules.get(i).length; j++) {
+                        int x = a.length() - alpha;
+                        int y = (a.length() - alpha) - rules.get(i)[j].length();
+                        if(y>-1) {
+                            String it = a.substring(y, x);
+                            if (it.equals(rules.get(i)[j])) {
+                                valid = true;
+                            }
+                        }
                     }
                 }
             }
