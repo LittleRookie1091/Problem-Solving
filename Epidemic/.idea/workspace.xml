@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ec3a69ae-9f89-45b5-acab-ead6e42d8cf9" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/src/Epidemic.class" beforeDir="false" afterPath="$PROJECT_DIR$/src/Epidemic.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Epidemic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Epidemic.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SocialDistancing/src/SocialDistance$Node.class" beforeDir="false" afterPath="$PROJECT_DIR$/../SocialDistancing/src/SocialDistance$Node.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SocialDistancing/src/SocialDistance.class" beforeDir="false" afterPath="$PROJECT_DIR$/../SocialDistancing/src/SocialDistance.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SocialDistancing/src/SocialDistance.java" beforeDir="false" afterPath="$PROJECT_DIR$/../SocialDistancing/src/SocialDistance.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SocialDistancing/src/input.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../SocialDistancing/src/input.txt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1hj8caAfHeaL0LNBbbR0vZes8ne" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ec3a69ae-9f89-45b5-acab-ead6e42d8cf9" name="Default Changelist" comment="" />
+      <created>1600513220359</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1600513220359</updated>
+      <workItem from="1600513221437" duration="13527000" />
+      <workItem from="1600564826477" duration="16000" />
+      <workItem from="1600998732123" duration="4521000" />
+      <workItem from="1601121643409" duration="749000" />
+      <workItem from="1601171083065" duration="845000" />
+      <workItem from="1601344393913" duration="952000" />
+      <workItem from="1601346447367" duration="3000" />
+      <workItem from="1601354066272" duration="764000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+</project>
