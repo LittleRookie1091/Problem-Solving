@@ -10,9 +10,20 @@ public class PlayIce {
     private ArrayList<String[]> rules = new ArrayList<>();
     private HashMap<Integer, Long> number = new HashMap<>();
     private ArrayList<ArrayList<Integer>> location = new ArrayList<>();
+    private ArrayList<String> strings = new ArrayList<>();
     private int leng = 0;
     private int maxer = 0;
 
+
+    /*
+    Methods to check:
+    precursor +
+    setRules +
+    initial +
+    checkrules +
+    setFirst +
+    checkrulesWord
+     */
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         PlayIce main = new PlayIce();
@@ -31,61 +42,141 @@ public class PlayIce {
         }
         main.setRules();
         ArrayList<String> use = new ArrayList<>();
-        ArrayList<Integer> numUse = new ArrayList<>();
+        ArrayList<Long> numUse = new ArrayList<>();
         use = main.initial(main.alphabet);
+        main.number.put(1, (long)use.size());
         main.leng = main.longestRule();
-
-        //System.out.println(use);
+        int x = 0;
         for (int i = 2; i <= main.maxer; i++) {
-            if (i < main.leng) {
-                use = main.amountOfWords(i, use);
-                main.number.put(i, (long) use.size());
-            } else {
-                numUse = main.amountChecked(use,numUse, i);
-            }
+
+           // until we get to longest rule length
+                if (i < main.leng) {
+                    use = main.amountOfWords(i, use);
+                    main.number.put(i, (long) use.size());
+                } else {
+                    for(int ex = 0 ; ex< main.rules.size(); ex ++){
+                       // System.out.println(main.rules.get(ex)[0]);
+                    }
+                    if (i == main.leng) {
+                        numUse = main.amountCheckedFirst(use, numUse, i);
+                    } else {
+                        numUse = main.amountChecked(use, numUse, i);
+                    }
+                }
+/*
+            System.out.println(i);
+            main.printer(numUse, i);
+            System.out.println();
+            System.out.println();
+
+ */
         }
-        // System.out.println(main.number);
-        // main.outPut();
+        main.outPut();
+
+
     }
 
-    public ArrayList<Integer> amountChecked(ArrayList<String> use, ArrayList<Integer> temp, int index){
-        if(index==leng){
-            temp = rules(use);
-        }
-        for(int i = 0; i<location.size();i++){
-            int num = 0;
-            for(int j = 0; j<location.get(i).size();j++){
-                num  = num + location.get(i).get(j);
+    //This will go up to the index in getting all words that fit, including those that may cause cases
+    //on their own.
+    public ArrayList<String> setFirst(ArrayList<String> use, int index, int check){
+        ArrayList<String> temp = new ArrayList<>();
+        HashMap<String, String> map = new HashMap<>();
+        if(check<index) {
+            for (int i = 0; i < use.size(); i++) {
+                for (int j = 0; j < alphabet.size(); j++) {
+                    if(!map.containsKey(use.get(i) + alphabet.get(j))) {
+                        temp.add(use.get(i) + alphabet.get(j));
+                        map.put(use.get(i) + alphabet.get(j), use.get(i) + alphabet.get(j));
+                    }
+                }
             }
-            temp.add(num);
+            //System.out.println(check);
+            return setFirst(temp, index, check+1);
+        }else {
+            return use;
         }
-        number.put(index, (long) temp.size());
+
+    }
+
+    public ArrayList<Long> amountCheckedFirst(ArrayList<String> use, ArrayList<Long> temp, int index){
+        ArrayList<String> it = setFirst(alphabet, leng, 1);
+        //System.out.println(it.size());
+        temp = rules(it);
+       //printer(temp, index);
+        long total = 0;
+        for (int i = 0; i < location.size(); i++) {
+            long num = 0;
+            for (int j = 0; j < location.get(i).size(); j++) {
+                num = num + temp.get(location.get(i).get(j));
+            }
+           total = total + temp.get(i);
+        }
+        //System.out.println("Here");
+        number.put(index, total);
+        //System.out.println(temp);
+        //System.out.println(location);
         return temp;
     }
+
+    public ArrayList<Long> amountChecked(ArrayList<String> use, ArrayList<Long> temp, int index){
+            ArrayList<Long> newTemp = new ArrayList<>();
+           // printer(temp, index);
+            long total = 0;
+            for (int i = 0; i < location.size(); i++) {
+                long num = 0;
+                for (int j = 0; j < location.get(i).size(); j++) {
+                    num = num + temp.get(location.get(i).get(j));
+                }
+                newTemp.add(num);
+                total = total + num;
+            }
+
+            number.put(index, total);
+            return newTemp;
+    }
+
+    public void printer(ArrayList<Long> temp, int index){
+        System.out.println(number.get(index));
+
+        for(int i = 0; i< temp.size(); i++){
+            System.out.println(i+"  "+strings.get(i)+" "+ temp.get(i)+" Locations: "+location.get(i));
+
+        }
+
+
+    }
+
 
     /*
     Sets up the temp array with the scores for each iteration so far, and sets up the location array
 
     Location array: One array for each word, specifying it's precursor words indices
      */
-    public ArrayList<Integer> rules(ArrayList<String> use){
-        ArrayList<Integer> temp = new ArrayList<>();
+    public ArrayList<Long> rules(ArrayList<String> use){
+        ArrayList<Long> temp = new ArrayList<>();
         for(int i = 0; i<use.size();i++){
-            if(checkRules(use.get(i))){
+            if(checkRulesWord(use.get(i))){
                 ArrayList<Integer> newArray = new ArrayList<>();
                 location.add(newArray);
-                temp.add(1);
+                //System.out.println("true");
+                strings.add(use.get(i));
+                temp.add((long) 1);
             }else{
-                ArrayList<Integer> newArray = new ArrayList<>();
-                location.add(newArray);
-                temp.add(0);
+               // if(checkRulesWord(use.get(i))) {
+                    ArrayList<Integer> newArray = new ArrayList<>();
+                    location.add(newArray);
+                    //System.out.println("false");
+                    strings.add(use.get(i));
+                    temp.add((long) 0);
+               // }
             }
         }
-        for(int i = 0; i< location.size(); i++){
-            String a = use.get(i);
+        for(long i = 0; i< location.size(); i++){
+            String a = use.get((int) i);
+          //  System.out.println("HERE OMG" + location.size());
             for(int j = 0; j<use.size();j++){
                 if(precursor(a, use.get(j))){
-                    location.get(i).add(j);
+                    location.get((int) i).add(j);
                 }
             }
         }
@@ -109,9 +200,10 @@ public class PlayIce {
         for (int i = 0; i < rules.size(); i++) {
             String rule = rules.get(i)[0];
             String len = "";
-            for (int j = 1; j < rules.get(i)[j].length(); j++) {
+            for (int j = 1; j < rules.get(i).length; j++) {
                 if (rules.get(i)[j].length() > len.length()) {
                     len = rules.get(i)[j];
+
                 }
             }
             String utilise = rule + len;
@@ -127,6 +219,9 @@ public class PlayIce {
         for (int i = 0; i < params.get(0).length(); i++) {
             alphabet.add(params.get(0).substring(i, i + 1));
         }
+        String[] ruler = new String[1];
+        ruler[0] = "$$";
+        rules.add(ruler);
         //Set rules, setting up array of arrays of rule
         //Each array/rule starts with the bad string, and the exceptions for that string are the following
         for (int i = 1; i < params.size(); i++) {
@@ -149,20 +244,24 @@ public class PlayIce {
         HashMap<String, Boolean> doubles = new HashMap<>();
         for (int i = 0; i < use.size(); i++) {
             String a = use.get(i);
+            boolean valid = true;
             if (rules.size() != 0) {
                 for (int j = 0; j < rules.size(); j++) {
-                    if (!a.contains(rules.get(j)[0])) {
-                        if (!doubles.containsKey(a)) {
-                            doubles.put(a, true);
-                            temp.add(a);
-                        }
+                    if (a.equals(rules.get(j)[0])) {
+                      // System.out.println(a+" "+rules.get(j)[0]);
+                            valid = false;
+                        j = rules.size();
                     }
                 }
             } else {
                 temp.add(a);
             }
+            if(valid){
+               // doubles.put(a, true);
+                temp.add(a);
+            }
         }
-        System.out.println(1 + " " + temp.size());
+        //.println(1 + " " + temp.size());
         number.put(1, (long) temp.size());
         return temp;
     }
@@ -199,6 +298,7 @@ public class PlayIce {
 
     public boolean checkRules(String a) {
         boolean valid = true;
+        //System.out.println(a);
         //Go through each rule
         for (int i = 0; i < rules.size(); i++) {
             int alpha = rules.get(i)[0].length();
@@ -206,6 +306,7 @@ public class PlayIce {
                 String bet = a.substring(a.length() - alpha);
                 if (bet.equals(rules.get(i)[0])) {
                     valid = false;
+                    //System.out.println("Rule found "+ rules.get(i)[0]);
                     for (int j = 1; j < rules.get(i).length; j++) {
                         int x = a.length() - alpha;
                         int y = (a.length() - alpha) - rules.get(i)[j].length();
@@ -219,9 +320,69 @@ public class PlayIce {
                 }
             }
         }
+        //System.out.println(valid);
         return valid;
     }
 
+    public boolean checkRulesWord(String x) {
+        boolean valid = true;
+        //System.out.println(x);
+        //Go through each rule
+        for(int i = 0; i<rules.size(); i++){
+            String a = x;
+            int place = 0;
+            while(a.indexOf(rules.get(i)[0], place)!= -1){
+                valid = false;
+                int index = a.indexOf(rules.get(i)[0], place);
+                place = index+rules.get(i)[0].length();
+                if(!(rules.get(i).length<2)) {
+                    for (int j = 1; j < rules.get(i).length; j++) {
+                        int num = rules.get(i)[j].length();
+                        if (index - num < 0) {
+                            return false;
+                        }
+                        //System.out.println();
+                       // System.out.println(rules.get(i)[0]+" "+rules.get(i)[j]+" "+j+" " + a);
+                        String b = a.substring(index - num, index);
+                        if (b.equals(rules.get(i)[j])) {
+                            valid = true;
+                            j = rules.get(i).length;
+                        } else {
+                            // System.out.println(b+" "+a+ " "+rules.get(i)[j] );
+                            return false;
+                        }
+                      //  a = a.substring(index + rules.get(i)[0].length());
+                    }
+                }else{
+                    return valid;
+                }
+            }
+        }
+        return valid;
+    }
+
+    public ArrayList<String> setUpArray(ArrayList<String> use) {
+        ArrayList<String> temp = new ArrayList<>();
+        HashMap<String, Boolean> doubles = new HashMap<>();
+        for (int i = 0; i < use.size(); i++) {
+            String a = use.get(i);
+            if (rules.size() != 0) {
+                for (int j = 0; j < rules.size(); j++) {
+                    if (!a.contains(rules.get(j)[0])) {
+                        if (!doubles.containsKey(a)) {
+                            doubles.put(a, true);
+                            temp.add(a);
+                        }
+                    }
+                }
+            } else {
+                temp.add(a);
+            }
+        }
+        //.println(1 + " " + temp.size());
+        number.put(1, (long) temp.size());
+        return temp;
+    }
 
     public void outPut() {
         for (int i = 0; i < instances.size(); i++) {
@@ -231,7 +392,12 @@ public class PlayIce {
                 }
             } catch (NumberFormatException e) {
                 boolean type = true;
-                if (!checkRules(instances.get(i))) {
+                for(int x = 0; x< instances.get(i).length();x++){
+                    if(!alphabet.contains(instances.get(i).substring(x,x+1))){
+                        type = false;
+                    }
+                }
+                if (!checkRulesWord(instances.get(i))) {
                     type = false;
                 }
                 if (type) {
