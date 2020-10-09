@@ -9,6 +9,7 @@ public class PlayIce {
     private ArrayList<String> alphabet = new ArrayList<String>();
     private ArrayList<String[]> rules = new ArrayList<>();
     private HashMap<Integer, Long> number = new HashMap<>();
+    private HashMap<String, ArrayList<Integer>> strNum = new HashMap<>();
     private ArrayList<ArrayList<Integer>> location = new ArrayList<>();
     private ArrayList<String> strings = new ArrayList<>();
     private int leng = 0;
@@ -46,7 +47,9 @@ public class PlayIce {
         use = main.initial(main.alphabet);
         main.number.put(1, (long)use.size());
         main.leng = main.longestRule();
+        //System.out.println(main.checkRulesWord("aaaab"));
         int x = 0;
+
         for (int i = 2; i <= main.maxer; i++) {
 
            // until we get to longest rule length
@@ -68,9 +71,10 @@ public class PlayIce {
             main.printer(numUse, i);
             System.out.println();
             System.out.println();
+*/
 
- */
         }
+
         main.outPut();
 
 
@@ -136,14 +140,21 @@ public class PlayIce {
     }
 
     public void printer(ArrayList<Long> temp, int index){
-        System.out.println(number.get(index));
+        if(index==10) {
+            System.out.println(number.get(index));
 
-        for(int i = 0; i< temp.size(); i++){
-            System.out.println(i+"  "+strings.get(i)+" "+ temp.get(i)+" Locations: "+location.get(i));
+            for (int i = 0; i < temp.size(); i++) {
+                for(int j = 0; j<rules.size();j++){
+                    if(strings.get(i).contains(rules.get(j)[0])){
+                        System.out.println(i + "  " + strings.get(i) + " " + temp.get(i) + " Locations: " + location.get(i));
+                   j = rules.size();
+                    }else{
 
+                    }
+                }
+
+            }
         }
-
-
     }
 
 
@@ -161,6 +172,13 @@ public class PlayIce {
                 //System.out.println("true");
                 strings.add(use.get(i));
                 temp.add((long) 1);
+                if(strNum.containsKey(use.get(i).substring(1))){
+                    strNum.get(use.get(i).substring(1)).add(i);
+                }else{
+                    ArrayList<Integer> a = new ArrayList<>();
+                    a.add(i);
+                    strNum.put(use.get(i).substring(1), a);
+                }
             }else{
                // if(checkRulesWord(use.get(i))) {
                     ArrayList<Integer> newArray = new ArrayList<>();
@@ -168,17 +186,30 @@ public class PlayIce {
                     //System.out.println("false");
                     strings.add(use.get(i));
                     temp.add((long) 0);
+                if(strNum.containsKey(use.get(i).substring(1))){
+                    strNum.get(use.get(i).substring(1)).add(i);
+                }else{
+                    ArrayList<Integer> a = new ArrayList<>();
+                    a.add(i);
+                    strNum.put(use.get(i).substring(1), a);
+                }
                // }
             }
         }
         for(long i = 0; i< location.size(); i++){
+
             String a = use.get((int) i);
-          //  System.out.println("HERE OMG" + location.size());
-            for(int j = 0; j<use.size();j++){
-                if(precursor(a, use.get(j))){
-                    location.get((int) i).add(j);
+            //System.out.println("HERE OMG" + i+" "+location.size());
+          //  for(int j = 0; j<use.size();j++){
+            ArrayList<Integer> theShort = strNum.get(a.substring(0,a.length()-1));
+            if(checkRulesWord(a)) {
+                for (int j = 0; j < theShort.size(); j++) {
+                    if (precursor(a, use.get(theShort.get(j)))) {
+                        location.get((int) i).add(theShort.get(j));
+                    }
                 }
             }
+          //  }
         }
         return temp;
     }
@@ -338,18 +369,19 @@ public class PlayIce {
                 if(!(rules.get(i).length<2)) {
                     for (int j = 1; j < rules.get(i).length; j++) {
                         int num = rules.get(i)[j].length();
-                        if (index - num < 0) {
-                            return false;
-                        }
-                        //System.out.println();
-                       // System.out.println(rules.get(i)[0]+" "+rules.get(i)[j]+" "+j+" " + a);
-                        String b = a.substring(index - num, index);
-                        if (b.equals(rules.get(i)[j])) {
-                            valid = true;
-                            j = rules.get(i).length;
-                        } else {
-                            // System.out.println(b+" "+a+ " "+rules.get(i)[j] );
-                            return false;
+                        if (index - num > -1) {
+                            //System.out.println();
+                            // System.out.println(rules.get(i)[0]+" "+rules.get(i)[j]+" "+j+" " + a);
+                            String b = a.substring(index - num, index);
+                            if (b.equals(rules.get(i)[j])) {
+                                valid = true;
+                                j = rules.get(i).length;
+                            } else {
+                                // System.out.println(b+" "+a+ " "+rules.get(i)[j] );
+                                return false;
+                            }
+                        }else if(index==0){
+                            return valid;
                         }
                       //  a = a.substring(index + rules.get(i)[0].length());
                     }
