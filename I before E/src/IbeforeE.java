@@ -10,14 +10,24 @@ public class IbeforeE {
     private HashMap<String, ArrayList<Long>> strNum = new HashMap<>();
     private ArrayList<Long> finalNumbers = new ArrayList<>();
     private ArrayList<Node> nodes = new ArrayList<>();
+    private HashMap<String, Long> iterations = new HashMap<>();
+    private HashMap<String, Long> previous = new HashMap<>();
     private int maxer = 0;
 
     private class Node{
         private String word ="";
         private String preString = "";
         private long score = 0;
+        private long newScore = 0;
         private ArrayList<Integer> precursors = new ArrayList<>();
 
+        public long getNewScore() {
+            return newScore;
+        }
+
+        public void setNewScore(long newScore) {
+            this.newScore = newScore;
+        }
         public Node(){
 
         }
@@ -89,19 +99,85 @@ public class IbeforeE {
         ArrayList<String> words = main.getRuleSizeWords(main.alphabet, 4, 0);
         ArrayList<String> firstSets = main.checkedAlphabet(main.alphabet);
         main.finalNumbers.add((long) firstSets.size());
-        main.nodeSet(words);
-        //System.out.println(main.checkEndOfWord("aab"));
+        //main.nodeSet(words);
+        //System.out.println(main.checkRulesWord("ab"));
         //Find the amount of words per generation
 
         for(int i = 1; i <= main.maxer;i++){
             if(i<5){
                 firstSets = main.countWords(firstSets);
+                System.out.println(i);
                 main.finalNumbers.add((long) firstSets.size());
             }else{
-
+                if(i==5){
+                    System.out.println(i);
+                    for(int j = 0; j<firstSets.size(); j++){
+                        main.previous.put(firstSets.get(j), (long) 1);
+                    }
+                    firstSets = main.iteratorOfGods(firstSets);
+                }else{
+                    System.out.println(i);
+                    firstSets = main.iteratorOfGods(firstSets);
+                }
+                //long total = main.findIterations();
+                //main.finalNumbers.add(total);
             }
         }
-        System.out.println(words.size());
+        System.out.println(main.finalNumbers);
+    }
+
+    public ArrayList<String> iteratorOfGods(ArrayList<String> words){
+        ArrayList<String> temp = new ArrayList<>();
+        for(int i = 0; i< words.size(); i++){
+            System.out.println(i);
+            String word = words.get(i);
+            long num = previous.get(word);
+            for(int j =0 ; j<alphabet.size();j++){
+                String newWord = word.substring(1)+alphabet.get(j);
+                if(checkEndOfWord(newWord)){
+                    if(iterations.containsKey(newWord)){
+                        long a = iterations.get(newWord);
+                        iterations.replace(newWord, a+num);
+                    }else{
+                        iterations.put(newWord, num);
+                        temp.add(newWord);
+                    }
+                }
+            }
+        }
+        long total = 0;
+        for(int i = 0; i<temp.size();i++){
+            total = total + iterations.get(temp.get(i));
+        }
+        finalNumbers.add(total);
+        previous = iterations;
+        iterations = new HashMap<>();
+        return temp;
+    }
+
+    public long findIterations(){
+        System.out.println("Entered");
+        System.out.println();
+        for(int i = 0; i< nodes.size(); i++){
+            System.out.println("Node: "+i +" "+nodes.get(i).getWord());
+            System.out.println();
+            long num = 0;
+            if(checkRulesWord(nodes.get(i).getWord())) {
+                ArrayList<Integer> precursors = nodes.get(i).getPrecursors();
+                for (int j = 0; j < precursors.size(); j++) {
+                    System.out.println("Precursors: " + nodes.get(precursors.get(j)).getWord());
+                    System.out.println();
+                    num = num + nodes.get(precursors.get(j)).getScore();
+                }
+            }
+            nodes.get(i).setNewScore(num);
+        }
+        long total = 0;
+        for(int i = 0; i< nodes.size(); i++){
+            nodes.get(i).setScore(nodes.get(i).getNewScore());
+            total = total + nodes.get(i).getNewScore();
+        }
+        return total;
     }
 
     public void nodeSet(ArrayList<String> words){
@@ -119,26 +195,69 @@ public class IbeforeE {
             }
         }
         //Find the precursor strings for each node
+        //Set score of each node
         for(int i = 0; i< nodes.size();i++){
             String word = nodes.get(i).getWord();
+           // System.out.println(word);
+           // System.out.println();
+            if(checkRulesWord(word)){
+                nodes.get(i).setScore(1);
+              //  System.out.println(1);
+            }else{
+                nodes.get(i).setScore(0);
+             //   System.out.println(0);
+            }
             String preword = nodes.get(i).getPreString();
             ArrayList<Long> pre = strNum.get(preword);
-            ArrayList<Long> precursors = new ArrayList<>();
+            ArrayList<Integer> precursors = new ArrayList<>();
             for(int j = 0; j<pre.size();j++){
+                //System.out.println(nodes.get(Math.toIntExact(pre.get(j))).getWord());
                 String other = nodes.get(Math.toIntExact(pre.get(j))).getWord()+word.substring(word.length()-1);
-                if(fullWordCheck(other)){
-                    precursors.add(pre.get(j));
-                }
+                precursors.add(Math.toIntExact(pre.get(j)));
+                nodes.get(i).setPrecursors(precursors);
             }
+            //System.out.println();
+            //System.out.println();
         }
     }
 
     //This will check the full word for exceptions, exception being the first characters
     //because these could be preceded by another word.
-    public boolean fullWordCheck(String word){
-        boolean check = true;
-
-        return check;
+    public boolean checkRulesWord(String x) {
+        boolean valid = true;
+        //System.out.println(x);
+        //Go through each rule
+        for(int i = 0; i<rules.size(); i++){
+            String a = x;
+            int place = 0;
+            while(a.indexOf(rules.get(i)[0], place)!= -1){
+                valid = false;
+                int index = a.indexOf(rules.get(i)[0], place);
+                place = index+rules.get(i)[0].length();
+                if(!(rules.get(i).length<2)) {
+                    for (int j = 1; j < rules.get(i).length; j++) {
+                        int num = rules.get(i)[j].length();
+                        if (index - num > -1) {
+                            //System.out.println();
+                            // System.out.println(rules.get(i)[0]+" "+rules.get(i)[j]+" "+j+" " + a);
+                            String b = a.substring(index - num, index);
+                            if (b.equals(rules.get(i)[j])) {
+                                valid = true;
+                                j = rules.get(i).length;
+                            } else {
+                                valid = false;
+                            }
+                        }else if(index==0){
+                            return false;
+                        }
+                        //  a = a.substring(index + rules.get(i)[0].length());
+                    }
+                }else{
+                    return valid;
+                }
+            }
+        }
+        return valid;
     }
 
     public ArrayList<String> countWords(ArrayList<String> use) {

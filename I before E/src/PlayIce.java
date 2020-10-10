@@ -47,7 +47,7 @@ public class PlayIce {
         use = main.initial(main.alphabet);
         main.number.put(1, (long)use.size());
         main.leng = main.longestRule();
-        //System.out.println(main.checkRulesWord("aaaab"));
+       // System.out.println(main.checkRules("aaab"));
         int x = 0;
 
         for (int i = 2; i <= main.maxer; i++) {
@@ -66,12 +66,12 @@ public class PlayIce {
                         numUse = main.amountChecked(use, numUse, i);
                     }
                 }
-/*
+
             System.out.println(i);
             main.printer(numUse, i);
             System.out.println();
             System.out.println();
-*/
+
 
         }
 
@@ -202,13 +202,11 @@ public class PlayIce {
             //System.out.println("HERE OMG" + i+" "+location.size());
           //  for(int j = 0; j<use.size();j++){
             ArrayList<Integer> theShort = strNum.get(a.substring(0,a.length()-1));
-            if(checkRulesWord(a)) {
                 for (int j = 0; j < theShort.size(); j++) {
                     if (precursor(a, use.get(theShort.get(j)))) {
                         location.get((int) i).add(theShort.get(j));
                     }
                 }
-            }
           //  }
         }
         return temp;
@@ -220,12 +218,31 @@ public class PlayIce {
         String checkB = second + first.substring(first.length()-1);
         if(first.equals(checkA)){
             if(checkRules(checkB)){
-                works = true;
+                //if(customCheck(first, second)) {
+                    works = true;
+               // }
             }
         }
         return works;
     }
 
+    public boolean customCheck(String x, String z){
+        boolean valid = true;
+        for(int i = 0; i<rules.size();i++){
+            for(int  j = 1; j<rules.get(i).length;j++){
+                int len = rules.get(i)[0].length();
+                int exLen = rules.get(i)[j].length();
+                if(x.substring(exLen,len+1).equals(rules.get(i)[0])) {
+                    valid = false;
+                }
+                if(z.substring(0,exLen).equals(rules.get(i)[0])){
+                    valid = true;
+                }
+            }
+        }
+
+        return valid;
+    }
     public int longestRule() {
         String longest = "";
         for (int i = 0; i < rules.size(); i++) {
@@ -324,6 +341,11 @@ public class PlayIce {
                 }
             }
         }
+        for (int i = 0; i < temp.size(); i++) {
+            System.out.println(i + "  "+temp.get(i));
+        }
+        System.out.println();
+        System.out.println();
         return temp;
     }
 
@@ -378,7 +400,7 @@ public class PlayIce {
                                 j = rules.get(i).length;
                             } else {
                                 // System.out.println(b+" "+a+ " "+rules.get(i)[j] );
-                                return false;
+                                valid = false;
                             }
                         }else if(index==0){
                             return valid;
